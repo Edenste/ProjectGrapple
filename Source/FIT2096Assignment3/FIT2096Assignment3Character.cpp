@@ -20,6 +20,13 @@ AFIT2096Assignment3Character::AFIT2096Assignment3Character()
 	// set our turn rates for input
 	TurnRateGamepad = 45.f;
 
+	// Set speeds
+	WalkSpeedMax = 555.0f;
+	SprintSpeedMax = 900.0f;
+
+	// Set character initial speeds
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedMax;
+
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -54,6 +61,10 @@ void AFIT2096Assignment3Character::SetupPlayerInputComponent(class UInputCompone
 	// Bind jump events
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	// Bind sprint events
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFIT2096Assignment3Character::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFIT2096Assignment3Character::StopSprint);
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &AFIT2096Assignment3Character::OnPrimaryAction);
@@ -121,6 +132,16 @@ void AFIT2096Assignment3Character::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
 	}
+}
+
+void AFIT2096Assignment3Character::Sprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeedMax;
+}
+
+void AFIT2096Assignment3Character::StopSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedMax;
 }
 
 void AFIT2096Assignment3Character::TurnAtRate(float Rate)

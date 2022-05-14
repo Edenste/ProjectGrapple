@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "FIT2096Assignment3Character.generated.h"
 
 class UInputComponent;
@@ -44,6 +45,12 @@ public:
 	/** Delegate to whom anyone can subscribe to receive this event */
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
 	FOnUseItem OnUseItem;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character Movement")
+	float WalkSpeedMax;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character Movement")
+	float SprintSpeedMax;
 protected:
 	
 	/** Fires a projectile. */
@@ -54,6 +61,12 @@ protected:
 
 	/** Handles strafing movement, left and right */
 	void MoveRight(float Val);
+
+	/** Handles initiating sprinting movement */
+	void Sprint();
+
+	/** Handles stopping sprinting movement */
+	void StopSprint();
 
 	/**
 	 * Called via input to turn at a given rate.

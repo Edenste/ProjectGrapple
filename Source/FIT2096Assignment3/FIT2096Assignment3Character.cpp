@@ -63,8 +63,12 @@ void AFIT2096Assignment3Character::SetupPlayerInputComponent(class UInputCompone
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// Bind sprint events
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFIT2096Assignment3Character::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFIT2096Assignment3Character::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFIT2096Assignment3Character::StopSprint);
+
+	// Bind crouch events
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AFIT2096Assignment3Character::StartCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AFIT2096Assignment3Character::StopCrouch);
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &AFIT2096Assignment3Character::OnPrimaryAction);
@@ -134,7 +138,7 @@ void AFIT2096Assignment3Character::MoveRight(float Value)
 	}
 }
 
-void AFIT2096Assignment3Character::Sprint()
+void AFIT2096Assignment3Character::StartSprint()
 {
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeedMax;
 }
@@ -142,6 +146,16 @@ void AFIT2096Assignment3Character::Sprint()
 void AFIT2096Assignment3Character::StopSprint()
 {
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedMax;
+}
+
+void AFIT2096Assignment3Character::StartCrouch()
+{
+	Crouch();
+}
+
+void AFIT2096Assignment3Character::StopCrouch()
+{
+	UnCrouch();
 }
 
 void AFIT2096Assignment3Character::TurnAtRate(float Rate)

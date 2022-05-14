@@ -63,10 +63,16 @@ protected:
 	void MoveRight(float Val);
 
 	/** Handles initiating sprinting movement */
-	void Sprint();
+	void StartSprint();
 
 	/** Handles stopping sprinting movement */
 	void StopSprint();
+
+	/** Handles initiating a crouch or a slide if sprint button is being pressed */
+	void StartCrouch();
+
+	/** Handles stopping a crouch or a slide */
+	void StopCrouch();
 
 	/**
 	 * Called via input to turn at a given rate.

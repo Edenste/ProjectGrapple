@@ -27,6 +27,9 @@ AFIT2096Assignment3Character::AFIT2096Assignment3Character()
 	// Set character initial speeds
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedMax;
 
+	// Default offset from the character location for grapple projectiles to spawn
+	GrappleOffset = FVector(100.0f, 0.0f, 10.0f);
+
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -41,6 +44,12 @@ AFIT2096Assignment3Character::AFIT2096Assignment3Character()
 	Mesh1P->CastShadow = false;
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
+
+	// Assign Mesh for GrappleProjectile
+	static ConstructorHelpers::FObjectFinder<UBlueprint> GrappleProjectileBlueprint(TEXT("Blueprint'/Game/GrappleHook/BP_GrappleProjectile.BP_GrappleProjectile'"));
+	if (GrappleProjectileBlueprint.Object) {
+		GrappleProjectileClass = GrappleProjectileBlueprint.Object->GeneratedClass;
+	}
 
 }
 
@@ -65,6 +74,11 @@ void AFIT2096Assignment3Character::SetupPlayerInputComponent(class UInputCompone
 	// Bind sprint events
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFIT2096Assignment3Character::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFIT2096Assignment3Character::StopSprint);
+
+	// Bind grapple events
+		// Bind sprint events
+	PlayerInputComponent->BindAction("Grapple", IE_Pressed, this, &AFIT2096Assignment3Character::StartGrapple);
+	PlayerInputComponent->BindAction("Grapple", IE_Released, this, &AFIT2096Assignment3Character::StopGrapple);
 
 	// Bind crouch events
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AFIT2096Assignment3Character::StartCrouch);
@@ -160,6 +174,36 @@ void AFIT2096Assignment3Character::StartCrouch()
 void AFIT2096Assignment3Character::StopCrouch()
 {
 	UnCrouch();
+}
+
+void AFIT2096Assignment3Character::StartGrapple()
+{
+	UWorld* const World = GetWorld();
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+	// GrappleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final spawning position
+	const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GrappleOffset);
+
+	//Set Spawn Collision Handling Override
+	FActorSpawnParameters ActorSpawnParams = FActorSpawnParameters();
+	ActorSpawnParams.bNoFail = true;
+	ActorSpawnParams.Owner = this;
+	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+	// Spawn the projectile at the correct position
+	SpawnedGrapple = Cast<AGrappleProjectile>(World->SpawnActor<AGrappleProjectile>(GrappleProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams));
+	
+	// Rotate projectile to match camera
+	SpawnedGrapple->SetActorRotation(PlayerController->PlayerCameraManager->GetCameraRotation());
+}
+
+void AFIT2096Assignment3Character::StopGrapple()
+{
+	// Check if the GrappleHook has already been destroyed
+	if (!SpawnedGrapple->Destroy())
+	{
+		SpawnedGrapple->Destroy();
+	}
 }
 
 void AFIT2096Assignment3Character::TurnAtRate(float Rate)

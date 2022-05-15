@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GrappleProjectile.h"
 #include "FIT2096Assignment3Character.generated.h"
 
 class UInputComponent;
@@ -46,11 +47,23 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
 	FOnUseItem OnUseItem;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character Movement: Walking")
 	float WalkSpeedMax;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character Movement: Walking")
 	float SprintSpeedMax;
+
+	/** Grapple's offset from the characters location */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	FVector GrappleOffset;
+
+	UPROPERTY(EditAnywhere, Category = Projectile)
+	TSubclassOf<class AGrappleProjectile> GrappleProjectileClass;
+
+	/** Used to keep track of grapple projectiles spawned by the player in the event they need to be destroyed by the Character*/
+	UPROPERTY()
+	AGrappleProjectile* SpawnedGrapple;
+
 protected:
 	
 	/** Fires a projectile. */
@@ -73,6 +86,12 @@ protected:
 
 	/** Handles stopping a crouch or a slide */
 	void StopCrouch();
+
+	/** Handles firing a grapple hook */
+	void StartGrapple();
+
+	/** Handles stopping and destroying a grapple hook */
+	void StopGrapple();
 
 	/**
 	 * Called via input to turn at a given rate.

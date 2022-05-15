@@ -122,6 +122,8 @@ void AFIT2096Assignment3Character::EndTouch(const ETouchIndex::Type FingerIndex,
 
 void AFIT2096Assignment3Character::MoveForward(float Value)
 {
+	// FString MaxAccel = FString::SanitizeFloat(GetCharacterMovement()->GetMaxAcceleration());
+	// GEngine->AddOnScreenDebugMessage(-1, 0.3f, FColor::White, MaxAccel);
 	if (Value != 0.0f)
 	{
 		// add movement in that direction
@@ -140,11 +142,13 @@ void AFIT2096Assignment3Character::MoveRight(float Value)
 
 void AFIT2096Assignment3Character::StartSprint()
 {
+	// GetCharacterMovement()->MaxAcceleration = 10;
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeedMax;
 }
 
 void AFIT2096Assignment3Character::StopSprint()
 {
+	// GetCharacterMovement()->MaxAcceleration = 100;
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedMax;
 }
 

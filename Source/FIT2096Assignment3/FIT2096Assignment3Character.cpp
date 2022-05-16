@@ -21,7 +21,7 @@ AFIT2096Assignment3Character::AFIT2096Assignment3Character()
 	TurnRateGamepad = 45.f;
 
 	// Set speeds
-	WalkSpeedMax = 555.0f;
+	WalkSpeedMax = 400.0f;
 	SprintSpeedMax = 900.0f;
 
 	// Set character initial speeds

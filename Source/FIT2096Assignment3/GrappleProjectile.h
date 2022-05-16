@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "GrappleProjectile.generated.h"
 
 UCLASS()
@@ -19,12 +21,16 @@ public:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* GrappleProjectileMesh;
 
-	// Keeps track of which actor that spawned this grapple to know what to draw towards
-	UPROPERTY(EditAnywhere)
-		AActor* Parent;
-
 	UPROPERTY(EditAnywhere)
 		float ProjectileSpeed;
+
+	// Governs Projectile Movement
+	UPROPERTY(VisibleAnywhere, Category = Movement)
+		UProjectileMovementComponent* ProjectileMovementComponent;
+
+	// Governs Projectile Hitbox
+	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+		USphereComponent* CollisionComponent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,7 +40,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Function that initializes the projectile's velocity in the shoot direction.
+	void FireInDirection(const FVector& ShootDirection);
+
 	UFUNCTION()
 		void OnGrappleHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
 			UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	
 };

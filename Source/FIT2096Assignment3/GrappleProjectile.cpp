@@ -90,7 +90,7 @@ FVector AGrappleProjectile::CharacterToGrapple()
 
 FVector AGrappleProjectile::GetLaunchVector()
 {
-	if (Owner != nullptr)
+	if (Owner != nullptr && Player != nullptr)
 	{
 		// Calculate the vectors between the player and the grappling hook
 		FVector DestinationVector = CharacterToGrapple();

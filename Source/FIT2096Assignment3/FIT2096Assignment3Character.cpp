@@ -206,7 +206,7 @@ void AFIT2096Assignment3Character::StartGrapple()
 void AFIT2096Assignment3Character::StopGrapple()
 {
 	// Check if the GrappleHook has already been destroyed
-	if (!SpawnedGrapple->Destroy())
+	if (SpawnedGrapple != nullptr)
 	{
 		SpawnedGrapple->Destroy();
 	}

@@ -10,7 +10,10 @@ AGrappleProjectile::AGrappleProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Initialise Projectile Properties
-	ProjectileSpeed = 2250;
+	ProjectileSpeed = 3500;
+	Deployed = false;
+	GrappleLaunchSpeed = 15000;
+	MinCharacterDistance = 200;
 
 	// Setup Mesh Component
 	GrappleProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Grapple Projectile Mesh"));
@@ -18,7 +21,6 @@ AGrappleProjectile::AGrappleProjectile()
 
 	// Generate Projectile Movement
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	ProjectileMovementComponent->SetUpdatedComponent(CollisionComponent);
 	ProjectileMovementComponent->InitialSpeed = ProjectileSpeed;
 	ProjectileMovementComponent->MaxSpeed = ProjectileSpeed;
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
@@ -34,7 +36,7 @@ void AGrappleProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
+	Player = Cast<ACharacter>(Owner);
 }
 
 // Called every frame
@@ -42,7 +44,20 @@ void AGrappleProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Start grappling player towards grappling hook if it has been deployed
+	if (Deployed && Owner != nullptr)
+	{
+		// Calculate if the grapple should be broken
+		if (GrappleBreakConditions())
+		{
+			Destroy();
+		}
 
+		// Find LaunchVector and multiply by DeltaTime
+		FVector LaunchVector = GetLaunchVector() * DeltaTime;
+
+		Player->LaunchCharacter(LaunchVector, false, false);
+	}
 }
 
 void AGrappleProjectile::FireInDirection(const FVector& ShootDirection)
@@ -53,7 +68,7 @@ void AGrappleProjectile::FireInDirection(const FVector& ShootDirection)
 void AGrappleProjectile::OnGrappleHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Prevent collision detection with Parent and ensure it is actually colliding with something
-	if ((OtherActor != this && OtherActor != Owner && OtherActor != nullptr))
+	if ((OtherActor != this && OtherActor != Owner && OtherActor != nullptr && Deployed != true))
 	{
 		
 		// Disable and collision and attach Grapple to new Actor
@@ -61,5 +76,72 @@ void AGrappleProjectile::OnGrappleHit(UPrimitiveComponent* HitComponent, AActor*
 		ProjectileMovementComponent->InitialSpeed = 0;
 		ProjectileMovementComponent->MaxSpeed = 0;
 		AttachToActor(OtherActor, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+		Deployed = true;
+	}
+}
+
+FVector AGrappleProjectile::CharacterToGrapple()
+{
+	// Calculate the vector between the player and the grappling hook
+	FVector PlayerLocation = Player->GetActorLocation();
+	FVector GrappleLocation = GetActorLocation();
+	return GrappleLocation - PlayerLocation;
+}
+
+FVector AGrappleProjectile::GetLaunchVector()
+{
+	if (Owner != nullptr)
+	{
+		// Calculate the vectors between the player and the grappling hook
+		FVector DestinationVector = CharacterToGrapple();
+		DestinationVector.Normalize();
+
+		// Calculate the forward vector of the camera
+		APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
+		FVector CameraForward = PlayerController->PlayerCameraManager->GetActorForwardVector();
+
+		// Add together the two Vectors of Launch and Camera to find the inbetween vector
+		FVector LaunchVector = DestinationVector + CameraForward;
+		LaunchVector.Normalize();
+		LaunchVector *= GrappleLaunchSpeed;
+
+		return LaunchVector;
+	}
+	else
+	{
+		return FVector::Zero();
+	}
+}
+
+bool AGrappleProjectile::GrappleBreakConditions()
+{
+	// Only go through break conditions if grapple is deployed
+	if (Deployed)
+	{
+		// Initialise Vectors
+		FVector DifferenceVector = CharacterToGrapple();
+		DifferenceVector.Normalize();
+		FVector GrappleForward = GetActorForwardVector();
+		// GrappleLocation.Normalize();
+		float DifferenceDistance = CharacterToGrapple().Size();
+
+		// Break the Grapple if Player goes past the Grapple
+		if (FVector::DotProduct(DifferenceVector, GrappleForward) < 0)
+		{
+			return true;
+		}
+		// Break the Grapple if Player is too near the Grapple
+		else if (DifferenceDistance < MinCharacterDistance)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
 	}
 }

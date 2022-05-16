@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "GameFramework/Character.h"
 #include "GrappleProjectile.generated.h"
 
 UCLASS()
@@ -18,19 +20,32 @@ public:
 	AGrappleProjectile();
 
 public:
+	// Used to check if grapple has hooked to anything and Owner should start being reeled towards it
+	UPROPERTY()
+		bool Deployed;
+
+	// Used to launch player through LaunchCharacter by casting Owner APawn* to ACharacter*
+	UPROPERTY()
+		ACharacter* Player;
+
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* GrappleProjectileMesh;
 
+	// Used to govern how fast the initial GrappleProjectile moves
 	UPROPERTY(EditAnywhere)
 		float ProjectileSpeed;
+
+	// Used to govern how fast the player is reeled in towards the grapple hook
+	UPROPERTY()
+		float GrappleLaunchSpeed;
+
+	// If Character is too close to grapple then used to break grapple
+	UPROPERTY()
+		float MinCharacterDistance;
 
 	// Governs Projectile Movement
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		UProjectileMovementComponent* ProjectileMovementComponent;
-
-	// Governs Projectile Hitbox
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-		USphereComponent* CollisionComponent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -47,4 +62,17 @@ public:
 		void OnGrappleHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
 			UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
+private:
+	// Function calculates the vector between the Character and GrappleProjectile
+	FVector CharacterToGrapple();
+
+	// Function used to calculate how much player is launched by and in which direction
+	// by finding the inbetween vector of the camera forward and the difference between
+	// the player and the GrappleProjectile
+	FVector GetLaunchVector();
+
+	// Function to calculate the Grapple break conditions when deployed which are:
+	// Break the Grapple if Player goes past the Grapple
+	// Break the Grapple if Player is near the Grapple
+	bool GrappleBreakConditions();
 };

@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GrappleProjectile.h"
+// #include "CableComponent.h"
 #include "FIT2096Assignment3Character.generated.h"
 
 class UInputComponent;
@@ -59,6 +60,11 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Projectile)
 	TSubclassOf<class AGrappleProjectile> GrappleProjectileClass;
+
+	/*
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AGrappleProjectile> GrappleCableClass;
+	*/
 
 	/** Used to keep track of grapple projectiles spawned by the player in the event they need to be destroyed by the Character*/
 	UPROPERTY()

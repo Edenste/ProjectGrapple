@@ -51,6 +51,13 @@ AFIT2096Assignment3Character::AFIT2096Assignment3Character()
 		GrappleProjectileClass = GrappleProjectileBlueprint.Object->GeneratedClass;
 	}
 
+	/*
+	// Assign Mesh for GrappleCable
+	static ConstructorHelpers::FObjectFinder<UBlueprint> GrappleCableBlueprint(TEXT("Blueprint'/Game/GrappleHook/BP_GrappleCable.BP_GrappleCable'"));
+	if (GrappleCableBlueprint.Object) {
+		GrappleCableClass = GrappleCableBlueprint.Object->GeneratedClass;
+	}
+	*/
 }
 
 void AFIT2096Assignment3Character::BeginPlay()
@@ -200,6 +207,8 @@ void AFIT2096Assignment3Character::StartGrapple()
 
 		// Rotate SpawnedGrapple to match Camera
 		SpawnedGrapple->FireInDirection(SpawnRotation.Vector());
+
+		// Spawn 
 	}
 }
 

@@ -12,7 +12,7 @@ AGrappleProjectile::AGrappleProjectile()
 	// Initialise Projectile Properties
 	ProjectileSpeed = 3500;
 	Deployed = false;
-	GrappleLaunchSpeed = 15000;
+	GrappleLaunchSpeed = 12000;
 	MinCharacterDistance = 200;
 
 	// Setup Mesh Component

@@ -4,6 +4,7 @@
 #include "FIT2096Assignment3Projectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
@@ -192,7 +193,11 @@ void AFIT2096Assignment3Character::StartJump()
 	// We only want to spawn effects for double jumps and etc.
 	if (CanJump() && GetMovementComponent()->IsFalling())
 	{
-
+		// Spawn DoubleJump SFX at player location if it exists
+		if (SB_DoubleJump && GetWorld()->GetFirstPlayerController() != nullptr && GetWorld()->GetFirstPlayerController()->GetPawn() != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_DoubleJump, GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation());
+		}
 	}
 }
 

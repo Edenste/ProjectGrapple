@@ -70,6 +70,9 @@ public:
 	UPROPERTY()
 	AGrappleProjectile* SpawnedGrapple;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		USoundBase* SB_DoubleJump;
+
 protected:
 	
 	/** Fires a projectile. */

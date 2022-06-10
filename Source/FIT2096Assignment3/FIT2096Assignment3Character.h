@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GrappleProjectile.h"
+#include "NiagaraSystem.h"
 // #include "CableComponent.h"
 #include "FIT2096Assignment3Character.generated.h"
 
@@ -72,6 +73,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 		USoundBase* SB_DoubleJump;
+
+	UPROPERTY(EditAnywhere, Category = "Niagara")
+		UNiagaraSystem* NS_DoubleJump;
 
 protected:
 	

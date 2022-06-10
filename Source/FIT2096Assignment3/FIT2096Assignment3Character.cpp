@@ -4,11 +4,12 @@
 #include "FIT2096Assignment3Projectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AFIT2096Assignment3Character
@@ -193,10 +194,22 @@ void AFIT2096Assignment3Character::StartJump()
 	// We only want to spawn effects for double jumps and etc.
 	if (CanJump() && GetMovementComponent()->IsFalling())
 	{
-		// Spawn DoubleJump SFX at player location if it exists
-		if (SB_DoubleJump && GetWorld()->GetFirstPlayerController() != nullptr && GetWorld()->GetFirstPlayerController()->GetPawn() != nullptr)
+		// Check if player exists
+		if (GetWorld()->GetFirstPlayerController() != nullptr && GetWorld()->GetFirstPlayerController()->GetPawn() != nullptr)
 		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_DoubleJump, GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation());
+			FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+
+			// Spawn DoubleJump SFX at player location if it exists
+			if (SB_DoubleJump)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_DoubleJump, PlayerLocation);
+			}
+
+			// Spawn DoubleJump Particles
+			if (NS_DoubleJump)
+			{
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_DoubleJump, PlayerLocation);
+			}
 		}
 	}
 }

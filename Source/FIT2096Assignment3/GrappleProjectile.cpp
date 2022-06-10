@@ -2,6 +2,7 @@
 
 #include "GrappleProjectile.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 AGrappleProjectile::AGrappleProjectile()
@@ -81,7 +82,13 @@ void AGrappleProjectile::OnGrappleHit(UPrimitiveComponent* HitComponent, AActor*
 		// Spawn GrappleDeploy SFX
 		if (SB_GrappleDeploy)
 		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_GrappleDeploy, OtherActor->GetActorLocation());
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_GrappleDeploy, GetActorLocation());
+		}
+
+		// Spawn GrappleDeploy Particles
+		if (NS_GrappleDeploy)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_GrappleDeploy, GetActorLocation());
 		}
 	}
 }

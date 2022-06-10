@@ -8,6 +8,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameFramework/Character.h"
+#include "NiagaraSystem.h"
 #include "GrappleProjectile.generated.h"
 
 UCLASS()
@@ -49,6 +50,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 		USoundBase* SB_GrappleDeploy;
+
+	UPROPERTY(EditAnywhere, Category = "Niagara")
+		UNiagaraSystem* NS_GrappleDeploy;
 
 protected:
 	// Called when the game starts or when spawned

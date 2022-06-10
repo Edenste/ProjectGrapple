@@ -93,6 +93,9 @@ protected:
 	/** Handles stopping a crouch or a slide */
 	void StopCrouch();
 
+	/** Internal handling of the jump function to allow for the creation of SFX and Sounds **/
+	void StartJump();
+	
 	/** Handles firing a grapple hook */
 	void StartGrapple();
 

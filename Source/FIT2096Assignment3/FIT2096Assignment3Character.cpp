@@ -75,7 +75,7 @@ void AFIT2096Assignment3Character::SetupPlayerInputComponent(class UInputCompone
 	check(PlayerInputComponent);
 
 	// Bind jump events
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AFIT2096Assignment3Character::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// Bind sprint events
@@ -181,6 +181,19 @@ void AFIT2096Assignment3Character::StartCrouch()
 void AFIT2096Assignment3Character::StopCrouch()
 {
 	UnCrouch();
+}
+
+void AFIT2096Assignment3Character::StartJump()
+{
+	bPressedJump = true;
+	JumpKeyHoldTime = 0.0f;
+
+	// Check if the player is allowed to jump and if this is a jump that's not on the ground
+	// We only want to spawn effects for double jumps and etc.
+	if (CanJump() && GetMovementComponent()->IsFalling())
+	{
+
+	}
 }
 
 void AFIT2096Assignment3Character::StartGrapple()

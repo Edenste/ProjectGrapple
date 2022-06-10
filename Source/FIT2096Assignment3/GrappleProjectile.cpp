@@ -1,6 +1,6 @@
 	// Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "Kismet/GameplayStatics.h"
 #include "GrappleProjectile.h"
 
 // Sets default values
@@ -77,6 +77,12 @@ void AGrappleProjectile::OnGrappleHit(UPrimitiveComponent* HitComponent, AActor*
 		ProjectileMovementComponent->MaxSpeed = 0;
 		AttachToActor(OtherActor, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
 		Deployed = true;
+
+		// Spawn GrappleDeploy SFX
+		if (SB_GrappleDeploy)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SB_GrappleDeploy, OtherActor->GetActorLocation());
+		}
 	}
 }
 

@@ -47,6 +47,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		UProjectileMovementComponent* ProjectileMovementComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		USoundBase* SB_GrappleDeploy;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

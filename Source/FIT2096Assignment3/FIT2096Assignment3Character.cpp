@@ -47,12 +47,6 @@ AFIT2096Assignment3Character::AFIT2096Assignment3Character()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
-	// Assign Mesh for GrappleProjectile
-	static ConstructorHelpers::FObjectFinder<UBlueprint> GrappleProjectileBlueprint(TEXT("Blueprint'/Game/GrappleHook/BP_GrappleProjectile.BP_GrappleProjectile'"));
-	if (GrappleProjectileBlueprint.Object) {
-		GrappleProjectileClass = GrappleProjectileBlueprint.Object->GeneratedClass;
-	}
-
 	/*
 	// Assign Mesh for GrappleCable
 	static ConstructorHelpers::FObjectFinder<UBlueprint> GrappleCableBlueprint(TEXT("Blueprint'/Game/GrappleHook/BP_GrappleCable.BP_GrappleCable'"));
@@ -222,24 +216,28 @@ void AFIT2096Assignment3Character::StartGrapple()
 	// Run code if only World Exists
 	if (World)
 	{
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
-		// GrappleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final spawning position
-		const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GrappleOffset);
-		
-		//Set Spawn Collision Handling Override
-		FActorSpawnParameters ActorSpawnParams = FActorSpawnParameters();
-		ActorSpawnParams.bNoFail = true;
-		ActorSpawnParams.Owner = this;
-		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-		
-		// Spawn the projectile at the correct position
-		SpawnedGrapple = Cast<AGrappleProjectile>(World->SpawnActor<AGrappleProjectile>(GrappleProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams));
+		// Only spawn grapple if assigned in blueprints
+		if (GrappleProjectileClass)
+		{
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
+			const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+			// GrappleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final spawning position
+			const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GrappleOffset);
 
-		// Rotate SpawnedGrapple to match Camera
-		SpawnedGrapple->FireInDirection(SpawnRotation.Vector());
+			//Set Spawn Collision Handling Override
+			FActorSpawnParameters ActorSpawnParams = FActorSpawnParameters();
+			ActorSpawnParams.bNoFail = true;
+			ActorSpawnParams.Owner = this;
+			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
-		// Spawn 
+			// Spawn the projectile at the correct position
+			SpawnedGrapple = Cast<AGrappleProjectile>(World->SpawnActor<AGrappleProjectile>(GrappleProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams));
+
+			// Rotate SpawnedGrapple to match Camera
+			SpawnedGrapple->FireInDirection(SpawnRotation.Vector());
+
+			// Spawn 
+		}
 	}
 }
 

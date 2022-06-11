@@ -88,7 +88,8 @@ void AGrappleProjectile::OnGrappleHit(UPrimitiveComponent* HitComponent, AActor*
 		// Spawn GrappleDeploy Particles
 		if (NS_GrappleDeploy)
 		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_GrappleDeploy, GetActorLocation());
+			FRotator ReversedRoation = FRotator(0, 0, 0) - K2_GetActorRotation(); // We want the opposite rotation so it doesn't spawn in the wall
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_GrappleDeploy, GetActorLocation(), ReversedRoation);
 		}
 	}
 }

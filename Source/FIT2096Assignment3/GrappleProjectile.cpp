@@ -46,7 +46,7 @@ void AGrappleProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// Start grappling player towards grappling hook if it has been deployed
-	if (Deployed && Owner != nullptr)
+	if (Deployed && Owner != nullptr && Player != nullptr)
 	{
 		// Calculate if the grapple should be broken
 		if (GrappleBreakConditions())
@@ -112,19 +112,21 @@ FVector AGrappleProjectile::GetLaunchVector()
 
 		// Calculate the forward vector of the camera
 		APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
-		FVector CameraForward = PlayerController->PlayerCameraManager->GetActorForwardVector();
+		if (PlayerController->PlayerCameraManager != nullptr)
+		{
+			FVector CameraForward = PlayerController->PlayerCameraManager->GetActorForwardVector();
 
-		// Add together the two Vectors of Launch and Camera to find the inbetween vector
-		FVector LaunchVector = DestinationVector + CameraForward;
-		LaunchVector.Normalize();
-		LaunchVector *= GrappleLaunchSpeed;
+			// Add together the two Vectors of Launch and Camera to find the inbetween vector
+			FVector LaunchVector = DestinationVector + CameraForward;
+			LaunchVector.Normalize();
+			LaunchVector *= GrappleLaunchSpeed;
 
-		return LaunchVector;
+			return LaunchVector;
+		}
 	}
-	else
-	{
-		return FVector::Zero();
-	}
+
+	// Base Case
+	return FVector::Zero();
 }
 
 bool AGrappleProjectile::GrappleBreakConditions()

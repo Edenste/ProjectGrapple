@@ -56,10 +56,10 @@ public:
 	float SprintSpeedMax;
 
 	/** Grapple's offset from the characters location */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	FVector GrappleOffset;
 
-	UPROPERTY(EditAnywhere, Category = Projectile)
+	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<class AGrappleProjectile> GrappleProjectileClass;
 
 	/*

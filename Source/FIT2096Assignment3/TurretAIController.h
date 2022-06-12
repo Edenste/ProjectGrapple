@@ -10,20 +10,17 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "FIT2096Assignment3Projectile.h"
-#include "GruntAIController.generated.h"
+#include "TurretAIController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class FIT2096ASSIGNMENT3_API AGruntAIController : public AAIController
+class FIT2096ASSIGNMENT3_API ATurretAIController : public AAIController
 {
 	GENERATED_BODY()
-	
 public:
-	// Functions
-	AGruntAIController();
-
+	ATurretAIController();
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
@@ -39,16 +36,16 @@ public:
 public:
 	// Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
-		float SightRadius = 5000;
+		float SightRadius = 8000;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
-		float SightAge = 3.5;
+		float SightAge = 7;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
-		float LoseSightRadius = SightRadius + 3000;
+		float FieldOfView = 360;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
-		float FieldOfView = 90;
+	UPROPERTY(EditAnywhere, Category = "AI")
+		float FireCooldown = 0.1f;		// Limits the Turret's capacity to fire
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
 		UAISenseConfig_Sight* SightConfiguration;
@@ -66,16 +63,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 		TSubclassOf<class AFIT2096Assignment3Projectile> ProjectileClass;
 
-	UPROPERTY(EditAnywhere)
-		int ShootRange = 300;
-
-	UNavigationSystemV1* NavigationSystem;
 	APawn* TargetPlayer;
 	bool StartLocationSet;
 	APawn* PossessedPawn;
-
-	UPROPERTY(EditAnywhere, Category = "AI")
-		int FireCooldown = 3;		// Limits the Grunt's capacity to fire to once every 3 seconds
 
 	FTimerHandle ReloadTimerHandle;
 };

@@ -236,7 +236,6 @@ void AFIT2096Assignment3Character::StartGrapple()
 			// Rotate SpawnedGrapple to match Camera
 			SpawnedGrapple->FireInDirection(SpawnRotation.Vector());
 
-			// Spawn 
 		}
 	}
 }

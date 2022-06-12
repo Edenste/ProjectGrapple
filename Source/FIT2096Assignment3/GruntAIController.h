@@ -25,6 +25,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual FRotator GetControlRotation() const override;
 	void GenerateNewRandomLocation();
@@ -59,4 +60,6 @@ public:
 
 	UNavigationSystemV1* NavigationSystem;
 	APawn* TargetPlayer;
+	bool StartLocationSet;
+	APawn* PossessedPawn;
 };

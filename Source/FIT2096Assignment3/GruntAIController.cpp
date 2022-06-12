@@ -23,6 +23,7 @@ AGruntAIController::AGruntAIController()
 	GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AGruntAIController::OnSensesUpdated);
 
 	TargetPlayer = nullptr;
+	StartLocationSet = false;
 }
 
 void AGruntAIController::BeginPlay()
@@ -46,11 +47,32 @@ void AGruntAIController::BeginPlay()
 void AGruntAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+
+	PossessedPawn = InPawn;
+	/*
+	if (InPawn != nullptr)
+	{
+		BlackboardComponent->SetValueAsVector("OriginalLocation", InPawn->GetActorLocation());
+	}
+	*/
+}
+
+void AGruntAIController::OnUnPossess()
+{
+	Super::OnUnPossess();
+
+	PossessedPawn = nullptr;
 }
 
 void AGruntAIController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if (!StartLocationSet)
+	{
+		BlackboardComponent->SetValueAsVector("OriginalLocation", PossessedPawn->GetActorLocation());
+		StartLocationSet = true;
+	}
 
 	if (TargetPlayer) {
 		BlackboardComponent->SetValueAsVector("PlayerPosition", TargetPlayer->GetActorLocation());

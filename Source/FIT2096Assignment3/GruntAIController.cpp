@@ -72,10 +72,25 @@ void AGruntAIController::Tick(float DeltaSeconds)
 	{
 		BlackboardComponent->SetValueAsVector("OriginalLocation", PossessedPawn->GetActorLocation());
 		StartLocationSet = true;
+		BlackboardComponent->SetValueAsBool("CanFire", true);
 	}
 
-	if (TargetPlayer) {
+	if (TargetPlayer != nullptr) {
 		BlackboardComponent->SetValueAsVector("PlayerPosition", TargetPlayer->GetActorLocation());
+
+		// Calculate if in ShootRange
+		FVector ShooterLocation = PossessedPawn->GetActorLocation();;
+		FVector TargetLocation = TargetPlayer->GetActorLocation();
+		FVector Difference = TargetLocation - ShooterLocation;
+
+		if (Difference.Size() <= ShootRange)
+		{
+			BlackboardComponent->SetValueAsBool("InShootRange", true);
+		}
+		else
+		{
+			BlackboardComponent->SetValueAsBool("InShootRange", false);
+		}
 	}
 }
 
@@ -97,6 +112,45 @@ void AGruntAIController::GenerateNewRandomLocation()
 		NavigationSystem->GetRandomPointInNavigableRadius(GetPawn()->GetActorLocation(), 2000, ReturnLocation);
 		BlackboardComponent->SetValueAsVector("PatrolPoint", ReturnLocation.Location);
 	}
+}
+
+void AGruntAIController::Shoot()
+{
+	if (TargetPlayer != nullptr)
+	{
+		if (ProjectileClass)
+		{
+			// Calculate the vector between the shooter and target
+			FVector ShooterOffset = FVector(100, 0, 0);
+			FRotator ShooterRotation = K2_GetActorRotation();
+			ShooterOffset = ShooterRotation.RotateVector(ShooterOffset); // Rotates vector offset to match rotation of Tank
+			FVector ShooterLocation = PossessedPawn->GetActorLocation();
+			FVector StartPosition = ShooterLocation + ShooterOffset;
+
+			// Spawn Projectile
+			//Set Spawn Collision Handling Override
+			FActorSpawnParameters ActorSpawnParams = FActorSpawnParameters();
+			ActorSpawnParams.bNoFail = true;
+			ActorSpawnParams.Owner = this;
+			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+			// Spawn the projectile at the correct position
+			Cast<AFIT2096Assignment3Projectile>(GetWorld()->SpawnActor(ProjectileClass, &StartPosition, &ShooterRotation, ActorSpawnParams));
+
+			// Setup timer to refresh Grunt's ability to fire
+			BlackboardComponent->SetValueAsBool("CanFire", false);
+			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AGruntAIController::OnTimedReload, FireCooldown, true);
+		}
+	}
+
+}
+
+void AGruntAIController::OnTimedReload()
+{
+	BlackboardComponent->SetValueAsBool("CanFire", true);
+
+	// Clear timer to reload
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
 }
 
 void AGruntAIController::OnSensesUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)

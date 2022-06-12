@@ -9,6 +9,7 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "FIT2096Assignment3Projectile.h"
 #include "GruntAIController.generated.h"
 
 /**
@@ -29,22 +30,25 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual FRotator GetControlRotation() const override;
 	void GenerateNewRandomLocation();
+	void Shoot();
+	void OnTimedReload();
 
 	UFUNCTION()
 		void OnSensesUpdated(AActor* UpdatedActor, FAIStimulus Stimulus);
 
+public:
 	// Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
-		float SightRadius = 500;
+		float SightRadius = 5000;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
 		float SightAge = 3.5;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
-		float LoseSightRadius = SightRadius + 100;
+		float LoseSightRadius = SightRadius + 3000;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
-		float FieldOfView = 60;
+		float FieldOfView = 90;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
 		UAISenseConfig_Sight* SightConfiguration;
@@ -58,8 +62,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Blackboard)
 		UBlackboardComponent* BlackboardComponent;
 
+	/** Projectile class to spawn */
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+		TSubclassOf<class AFIT2096Assignment3Projectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere)
+		int ShootRange = 300;
+
 	UNavigationSystemV1* NavigationSystem;
 	APawn* TargetPlayer;
 	bool StartLocationSet;
 	APawn* PossessedPawn;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+		int FireCooldown = 3;		// Limits the Tank's capacity to fire to once every 3 seconds
+
+	FTimerHandle ReloadTimerHandle;
 };

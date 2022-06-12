@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "FIT2096Assignment3Projectile.generated.h"
 
 class USphereComponent;

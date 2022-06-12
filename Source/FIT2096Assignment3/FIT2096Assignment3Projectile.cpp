@@ -33,11 +33,34 @@ AFIT2096Assignment3Projectile::AFIT2096Assignment3Projectile()
 
 void AFIT2096Assignment3Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
+	// Only add impulse and destroy projectile if we hit a physics 
+	if ((OtherActor != nullptr) && (OtherActor != this))
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		// Add Impulse if a Component
+		if ((OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
+		{
+			OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 
-		Destroy();
+			Destroy();
+		}
+		// Add Launch Vector if Actor
+		if (OtherActor != nullptr && OtherActor->CanBeDamaged())
+		{
+			
+			ACharacter* Target = Cast<ACharacter>(OtherActor);
+
+			// Calculate vector that OtherActor should be launched
+			FVector TargetLocation = Target->GetActorLocation();
+			FVector DifferenceVector = GetActorLocation() - Target->GetActorLocation();
+			DifferenceVector.Normalize();
+			FRotator Rotation = DifferenceVector.Rotation();
+			Rotation = Rotation * -1; // Reverse the rotation so we fling the target in the opposite direction
+
+			FVector LaunchVector = Rotation.RotateVector(FVector(1000, 0, 0));
+
+			// Launch target and destroy projectile
+			Target->LaunchCharacter(LaunchVector, false, false);
+			Destroy();
+		}
 	}
 }

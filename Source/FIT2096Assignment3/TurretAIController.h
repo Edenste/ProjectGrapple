@@ -44,8 +44,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
 		float FieldOfView = 360;
 
-	UPROPERTY(EditAnywhere, Category = "AI")
-		float FireCooldown = 0.1f;		// Limits the Turret's capacity to fire
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+		float FireCooldown = 0.7f;		// Limits the Turret's capacity to fire
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
 		UAISenseConfig_Sight* SightConfiguration;

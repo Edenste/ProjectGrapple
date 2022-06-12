@@ -66,8 +66,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 		TSubclassOf<class AFIT2096Assignment3Projectile> ProjectileClass;
 
-	UPROPERTY(EditAnywhere)
-		int ShootRange = 300;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
+		int ShootRange = 1000;
 
 	UNavigationSystemV1* NavigationSystem;
 	APawn* TargetPlayer;

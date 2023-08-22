@@ -15,7 +15,7 @@ The game package itself can be downloaded at the following for Windows: [Downloa
 
 # Screenshots
 - - -
-![Playground Level](https://github.com/Edenste/ProjectGrapple/assets/65239474/e9bc7fa4-b71c-4ce5-8815-1edb379f2279)
+![Playground Level](https://github.com/Edenste/ProjectGrapple/assets/65239474/fea98bbe-8f42-4d17-b809-ab14f1a3ed5e)
 
 ![Playground Level Cutscene](https://github.com/Edenste/ProjectGrapple/assets/65239474/82c32100-8090-4f95-aa6c-0b46e71dbdad)
 
